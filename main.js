@@ -12,8 +12,6 @@ const   processObject = memoryjs.openProcess("csgo.exe"),
         clientModule = memoryjs.findModule("client_panorama.dll", processObject.th32ProcessID),
         client = clientModule.modBaseAddr
 
-console.log('glow started...')
-
 setInterval(() => {
     if (memoryjs.readMemory(processHandle, client + offsets.dwEntityList, 'dword') > 0) {
         let glow_manager = memoryjs.readMemory(processHandle, client + offsets.dwGlowObjectManager, 'int')

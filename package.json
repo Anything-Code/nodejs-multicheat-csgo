@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "keypress": "^0.2.1",
     "memoryjs": "^3.0.2"
   }
 }
