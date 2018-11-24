@@ -14,8 +14,7 @@ const   processObject = memoryjs.openProcess("csgo.exe"),
 
 console.log('glow started...')
 
-while (true)
-{
+setInterval(() => {
     if (memoryjs.readMemory(processHandle, client + offsets.dwEntityList, 'dword') > 0) {
         let glow_manager = memoryjs.readMemory(processHandle, client + offsets.dwGlowObjectManager, 'int')
 
@@ -45,4 +44,4 @@ while (true)
             }
         }
     }
-}
+})
