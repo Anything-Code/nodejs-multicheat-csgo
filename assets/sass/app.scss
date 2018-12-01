@@ -1,0 +1,19 @@
+// Fonts
+@import '~raleway-webfont/raleway.min.css';
+
+// Material Icons
+@import '../fonts/material-icons/material-icons.min.css';
+
+//Fontawesome 5
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+// Variables
+@import 'variables';
+
+// Vuetify
+@import '~vuetify/dist/vuetify.min.css';
+
+.navbar-laravel {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
