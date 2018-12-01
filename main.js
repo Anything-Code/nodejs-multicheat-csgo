@@ -2,19 +2,21 @@ const Glow = require('./glow')
 const Memory = require('memoryjs')
 const Keyboard = require('iohook')
 const Keycode = require('keycode')
+const WebServer = require('./webServer')
 
 class Main {
     constructor () {
         this.started = false
         this.gameClosedAtStart = true
         this.listenForGameState()
+        this.ws = new WebServer
     }
     listenForGameState () {
         this.processStateInterval = setInterval(() => {
             if (this.processFound('csgo.exe') && !this.started) {
                 this.started = true
                 console.log('"csgo.exe" found')
-                this.listenForKeyboardInput(this.process)
+                this.listenForKeyboardInput(this.csProcess)
             } else if (!this.processFound('csgo.exe') && this.started) {
                 this.started = false
                 this.gameClosedAtStart = false
@@ -27,25 +29,33 @@ class Main {
         }, 200)
     }
     processFound (processName) {
-        this.process = Memory.openProcess(processName)
-        if (this.process.szExeFile == processName)
+        this.csProcess = Memory.openProcess(processName)
+        if (this.csProcess.szExeFile == processName)
             return true
         else
             return false
     }
-    listenForKeyboardInput (process) {
+    listenForKeyboardInput (csProcess) {
         console.log('Press f12 to toggle glow...')
+        this.ws.socketIo.on('connection', socket => {
+            socket.on('visuals transmitted', data => {
+                this.toggleGlow(csProcess)
+            })
+        })
         Keyboard.on('keydown', key => {
             if (Keycode(key.rawcode) === 'f12' && this.started) {
-                if (this.glow === undefined)
-                    this.glow = new Glow(process)
-                else if (this.glow.activated)
-                    this.glow.disable()
-                else
-                    this.glow.enable()
+                this.toggleGlow(csProcess)
             }
         })
         Keyboard.start()
+    }
+    toggleGlow (csProcess) {
+        if (this.glow === undefined)
+            this.glow = new Glow(csProcess)
+        else if (this.glow.activated)
+            this.glow.disable()
+        else
+            this.glow.enable()
     }
 }
 new Main
