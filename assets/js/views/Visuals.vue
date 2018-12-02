@@ -39,6 +39,11 @@ export default {
         sendVisualsConfig () {
             this.$socket.emit('visuals transmitted', { glow: this.glow })
         }
+    },
+    mounted () {
+        this.sockets.subscribe('visuals transmitted', data => {
+            this.glow = data
+        })
     }
 }
 </script>

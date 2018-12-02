@@ -50,12 +50,16 @@ class Main {
         Keyboard.start()
     }
     toggleGlow (csProcess) {
-        if (this.glow === undefined)
+        if (this.glow === undefined) {
             this.glow = new Glow(csProcess)
-        else if (this.glow.activated)
+            this.ws.socketIo.emit('visuals transmitted', true)
+        } else if (this.glow.activated) {
             this.glow.disable()
-        else
+            this.ws.socketIo.emit('visuals transmitted', false)
+        } else {
             this.glow.enable()
+            this.ws.socketIo.emit('visuals transmitted', true)
+        }
     }
 }
 new Main
