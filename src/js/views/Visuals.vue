@@ -12,17 +12,21 @@
                     Radar
                     <v-icon>favorite</v-icon>
                 </v-tab>
-                <v-tab>
+                <v-tab href="#tab-3">
                     No-Flash
                     <v-icon>account_box</v-icon>
                 </v-tab>
                     <v-tab-item value="tab-1">
                         <v-container>
-                            <v-switch @change="sendVisualsConfig" color="primary" v-model="glow" label="Enable/disable glow outline" />
+                            <v-switch @change="sendVisualsConfig('glow')" color="primary" v-model="glow" label="Enable/disable glow outline" />
                         </v-container>
                     </v-tab-item>
                     <v-tab-item value="tab-2"></v-tab-item>
-                    <v-tab-item value="tab-3" ></v-tab-item>
+                    <v-tab-item value="tab-3" >
+                        <v-container>
+                            <v-switch @change="sendVisualsConfig('noFlash')" color="primary" v-model="noFlash" label="Enable/disable noFlash functionality" />
+                        </v-container>
+                    </v-tab-item>
             </v-tabs>
         </v-flex>
     </v-card>
@@ -32,17 +36,24 @@ export default {
     data () {
         return {
             valid: null,
-            glow: null
+            glow: null,
+            noFlash: null
         }
     },
     methods: {
-        sendVisualsConfig () {
-            this.$socket.emit('visuals transmitted', { glow: this.glow })
+        sendVisualsConfig (typeOfVisual) {
+            if (typeOfVisual == 'glow')
+                this.$socket.emit('visuals transmitted', { glow: true })
+            else if (typeOfVisual == 'noFlash')
+                this.$socket.emit('visuals transmitted', { noFlash: true })
         }
     },
     mounted () {
-        this.sockets.subscribe('visuals transmitted', data => {
+        this.sockets.subscribe('glow transmitted', data => {
             this.glow = data
+        })
+        this.sockets.subscribe('noFlash transmitted', data => {
+            this.noFlash = data
         })
     }
 }
