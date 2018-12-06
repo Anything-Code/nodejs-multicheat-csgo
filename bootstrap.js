@@ -8,97 +8,112 @@ const WebServer = require('./webServer')
 
 module.exports = class Bootstrap {
     constructor () {
-        this.started = false
+        process.cfg = require('./config')
+        this.gameIsRunning = false
         this.gameClosedAtStart = true
         this.listenForGameState()
         this.ws = new WebServer
     }
     listenForGameState () {
         this.processStateInterval = setInterval(() => {
-            if (this.processFound('csgo.exe') && !this.started) {
-                this.started = true
-                console.log('"csgo.exe" found')
-                this.listenForKeyboardInput(this.csProcess)
-            } else if (!this.processFound('csgo.exe') && this.started) {
-                this.started = false
-                this.gameClosedAtStart = false
-                console.log('"csgo.exe" was closed. Terminating Process...')
-                process.exit()
-            } else if (!this.processFound('csgo.exe') && !this.started && this.gameClosedAtStart) {
-                this.gameClosedAtStart = false
-                console.log('"csgo.exe" not found, please start "csgo.exe"')
-            }
+            this.processFound('csgo.exe').then(message => {
+                if (!this.gameIsRunning) {
+                    this.gameIsRunning = true
+                    console.log(message)
+                    this.listenForKeyboardInput(this.csProcess)
+                }
+            }).catch(error => {
+                if (this.gameIsRunning) {
+                    this.gameIsRunning = false
+                    this.gameClosedAtStart = false
+                    console.log('"csgo.exe" was closed. Terminating Process...')
+                    process.exit()
+                } else if (!this.gameIsRunning && this.gameClosedAtStart) {
+                    this.gameClosedAtStart = false
+                    console.log(error)
+                }
+            })
         }, 200)
     }
     processFound (processName) {
-        let csProcess = Memory.openProcess(processName),
-            clientModule = Memory.findModule("client_panorama.dll", csProcess.th32ProcessID)
-        this.processhandle = csProcess.handle
-        this.client = clientModule.modBaseAddr
-        return csProcess.szExeFile == processName
+        return new Promise((resolve, reject) => {
+            if (Memory.getProcesses().find(singleProcess => { return singleProcess.szExeFile === processName }) != undefined) {
+                let csProcess = Memory.openProcess(processName),
+                    clientModule = Memory.findModule('client_panorama.dll', csProcess.th32ProcessID)
+                this.processhandle = csProcess.handle
+                this.client = clientModule.modBaseAddr
+                resolve(processName + ' found')
+            } else reject(processName + ' not found, please start ' + processName)
+        })
     }
     listenForKeyboardInput () {
-        console.log('Press f12 to turn everything off...')
+        if (process.cfg.visuals.glow) this.toggleCheat('glow')
+        if (process.cfg.visuals.noFlash) this.toggleCheat('noFlash')
+        if (process.cfg.misc.autopistol) this.toggleCheat('autopistol')
+
+        console.log('Press F12 to toggle anything you have activated on/off')
+
         this.ws.socketIo.on('connection', socket => {
             socket.on('visuals transmitted', visuals => {
-                if (visuals.glow)
-                    this.toggleGlow()
-                else if (visuals.noFlash)
-                    this.toggleNoFlash()
+                if (visuals.glow) this.toggleCheat('glow')
+                else if (visuals.noFlash) this.toggleCheat('noFlash')
             })
             socket.on('misc transmitted', misc => {
                 if (misc.autopistol)
-                    this.toggleAutopistol()
+                    this.toggleCheat('autopistol')
+            })
+            socket.on('route changed', data => {
+                this.ws.socketIo.emit('config transmitted', process.cfg)
             })
         })
         Keyboard.on('keydown', key => {
-            if (Keycode(key.rawcode) === 'f12' && this.started) {
-                if (this.glow != undefined) {
+            if (Keycode(key.rawcode) === 'f12' && this.gameIsRunning) {
+                if (this.glow != undefined && this.glow.activated) {
                     this.glow.disable()
-                    this.ws.socketIo.emit('glow transmitted', false)
-                }
-                if (this.noFlash != undefined) {
+                } else if (this.glow != undefined && !this.glow.activated) this.glow.enable()
+                if (this.noFlash != undefined && this.noFlash.activated) {
                     this.noFlash.disable()
-                    this.ws.socketIo.emit('noFlash transmitted', false)
-                }
+                } else if (this.noFlash != undefined && !this.noFlash.activated) this.noFlash.enable()
+                if (this.autopistol != undefined && this.autopistol.activated) {
+                    this.autopistol.disable()
+                } else if (this.autopistol != undefined && !this.autopistol.activated) this.autopistol.enable()
+                this.ws.socketIo.emit('config transmitted', process.cfg)
             }
         })
         Keyboard.start()
     }
-    toggleAutopistol () {
-        if (this.autopistol === undefined) {
-            this.autopistol = new Autopistol(this.processhandle, this.client)
-            this.ws.socketIo.emit('autopistol transmitted', true)
-        } else if (this.autopistol.activated) {
-            this.autopistol.disable()
-            this.ws.socketIo.emit('autopistol transmitted', false)
-        } else {
-            this.autopistol.enable()
-            this.ws.socketIo.emit('autopistol transmitted', true)
-        }
-    }
-    toggleNoFlash () {
-        if (this.noFlash === undefined) {
-            this.noFlash = new NoFlash(this.processhandle, this.client)
-            this.ws.socketIo.emit('noFlash transmitted', true)
-        } else if (this.noFlash.activated) {
-            this.noFlash.disable()
-            this.ws.socketIo.emit('noFlash transmitted', false)
-        } else {
-            this.noFlash.enable()
-            this.ws.socketIo.emit('noFlash transmitted', true)
-        }
-    }
-    toggleGlow () {
-        if (this.glow === undefined) {
-            this.glow = new Glow(this.processhandle, this.client)
-            this.ws.socketIo.emit('glow transmitted', true)
-        } else if (this.glow.activated) {
-            this.glow.disable()
-            this.ws.socketIo.emit('glow transmitted', false)
-        } else {
-            this.glow.enable()
-            this.ws.socketIo.emit('glow transmitted', true)
+    toggleCheat (type) {
+        switch (type) {
+            case 'glow':
+                if (this.glow === undefined) {
+                    this.glow = new Glow(this.processhandle, this.client)
+                } else if (this.glow.activated) {
+                    this.glow.disable()
+                } else {
+                    this.glow.enable()
+                }
+                this.ws.socketIo.emit('config transmitted', process.cfg)
+            break;
+            case 'noFlash':
+                if (this.noFlash === undefined) {
+                    this.noFlash = new NoFlash(this.processhandle, this.client)
+                } else if (this.noFlash.activated) {
+                    this.noFlash.disable()
+                } else {
+                    this.noFlash.enable()
+                }
+                this.ws.socketIo.emit('config transmitted', process.cfg)
+            break;
+            case 'autopistol':
+                if (this.autopistol === undefined) {
+                    this.autopistol = new Autopistol(this.processhandle, this.client)
+                } else if (this.autopistol.activated) {
+                    this.autopistol.disable()
+                } else {
+                    this.autopistol.enable()
+                }
+                this.ws.socketIo.emit('config transmitted', process.cfg)
+            break;
         }
     }
 }

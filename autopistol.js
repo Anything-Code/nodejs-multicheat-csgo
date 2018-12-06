@@ -9,6 +9,7 @@ module.exports = class Autopistol {
     }
     enable () {
         this.activated = true
+        process.cfg.misc.autopistol = true
         console.log('autopistol enabled...')
         this.loopInterval = setInterval(() => {
             if (Keyboard.getAsyncKeyState(0x1)) {
@@ -20,6 +21,7 @@ module.exports = class Autopistol {
     disable () {
         clearInterval(this.loopInterval)
         this.activated = false
+        process.cfg.misc.autopistol = false
         console.log('autopistol disabled...')
     }
 }

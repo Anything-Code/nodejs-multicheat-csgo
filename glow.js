@@ -8,6 +8,7 @@ module.exports = class Glow {
     }
     enable () {
         this.activated = true
+        process.cfg.visuals.glow = true
         console.log('glow enabled...')
         this.loopInterval = setInterval(() => {
             if (Memory.readMemory(this.processHandle, this.client + process.offsets.signatures.dwEntityList, 'dword') > 0) {
@@ -43,6 +44,7 @@ module.exports = class Glow {
     disable () {
         clearInterval(this.loopInterval)
         this.activated = false
+        process.cfg.visuals.glow = false
         console.log('glow disabled...')
     }
 }

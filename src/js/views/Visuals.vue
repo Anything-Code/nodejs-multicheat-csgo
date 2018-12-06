@@ -47,11 +47,10 @@ export default {
         }
     },
     mounted () {
-        this.sockets.subscribe('glow transmitted', data => {
-            this.glow = data
-        })
-        this.sockets.subscribe('noFlash transmitted', data => {
-            this.noFlash = data
+        this.$socket.emit('route changed', true)
+        this.sockets.subscribe('config transmitted', data => {
+            this.glow = data.visuals.glow
+            this.noFlash = data.visuals.noFlash
         })
     }
 }

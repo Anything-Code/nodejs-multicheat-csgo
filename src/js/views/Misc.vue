@@ -41,8 +41,9 @@ export default {
         }
     },
     mounted () {
+        this.$socket.emit('config transmitted', true)
         this.sockets.subscribe('autopistol transmitted', data => {
-            this.autopistol = data
+            this.autopistol = data.misc.autopistol
         })
     }
 }

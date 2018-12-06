@@ -1,4 +1,3 @@
-const Offsets = require('./offsets')
 const Memory = require('memoryjs')
 
 module.exports = class NoFlash {
@@ -16,12 +15,14 @@ module.exports = class NoFlash {
                 Memory.writeMemory(this.processHandle, this.localPlayer + process.offsets.netvars.m_flFlashMaxAlpha, 0.0, 'float')
         })
         this.activated = true
+        process.cfg.visuals.noFlash = true
         console.log('NoFlash enabled...')
     }
     disable () {
         clearInterval(this.loopInterval)
         Memory.writeMemory(this.processHandle, this.localPlayer + process.offsets.netvars.m_flFlashMaxAlpha, 255.0, 'float');
         this.activated = false
+        process.cfg.visuals.noFlash = false
         console.log('NoFlash disabled...')
     }
 }
