@@ -1,27 +1,24 @@
-const Offsets = require('./offsets')
 const Memory = require('memoryjs')
 
 module.exports = class Glow {
-    constructor (processObject) {
-        this.processObject = processObject
-        this.processHandle = this.processObject.handle
-        this.clientModule = Memory.findModule("client_panorama.dll", this.processObject.th32ProcessID)
-        this.client = this.clientModule.modBaseAddr
+    constructor (processHandle, client) {
+        this.processHandle = processHandle
+        this.client = client
         this.enable()
     }
     enable () {
         this.activated = true
         console.log('glow enabled...')
         this.loopInterval = setInterval(() => {
-            if (Memory.readMemory(this.processHandle, this.client + Offsets.dwEntityList, 'dword') > 0) {
-                let glow_manager = Memory.readMemory(this.processHandle, this.client + Offsets.dwGlowObjectManager, 'int')
+            if (Memory.readMemory(this.processHandle, this.client + process.offsets.signatures.dwEntityList, 'dword') > 0) {
+                let glow_manager = Memory.readMemory(this.processHandle, this.client + process.offsets.signatures.dwGlowObjectManager, 'int')
         
                 for (let i = 1; i < 32; i++) {
-                    let entity = Memory.readMemory(this.processHandle, this.client + Offsets.dwEntityList + i * 0x10, 'int')
+                    let entity = Memory.readMemory(this.processHandle, this.client + process.offsets.signatures.dwEntityList + i * 0x10, 'int')
         
                     if (entity) {
-                        let entity_team_id = Memory.readMemory(this.processHandle, entity + Offsets.m_iTeamNum, 'int'),
-                            entity_glow = Memory.readMemory(this.processHandle, entity + Offsets.m_iGlowIndex, 'int')
+                        let entity_team_id = Memory.readMemory(this.processHandle, entity + process.offsets.netvars.m_iTeamNum, 'int'),
+                            entity_glow = Memory.readMemory(this.processHandle, entity + process.offsets.netvars.m_iGlowIndex, 'int')
         
                         switch (entity_team_id) {
                             case 2: // Terrorist

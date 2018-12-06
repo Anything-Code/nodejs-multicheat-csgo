@@ -18,15 +18,7 @@
                         <v-list-tile-title>Aimbot</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile class="grey--text">
-                    <v-list-tile-action>
-                        <v-icon>home</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>Bunnyhop</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-                <v-list-tile class="grey--text">
+                <v-list-tile :to="{ name: 'misc' }">
                     <v-list-tile-action>
                         <v-icon>home</v-icon>
                     </v-list-tile-action>

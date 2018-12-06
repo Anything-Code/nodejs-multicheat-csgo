@@ -3,19 +3,18 @@
         <v-flex xs12>
             <v-tabs centered icons-and-text>
                 <v-tabs-slider color="primary" />
-
-                <v-tab href="#tab-1">
-                    Glow
-                    <v-icon>phone</v-icon>
-                </v-tab>
-                <v-tab>
-                    Radar
-                    <v-icon>favorite</v-icon>
-                </v-tab>
-                <v-tab href="#tab-3">
-                    No-Flash
-                    <v-icon>account_box</v-icon>
-                </v-tab>
+                    <v-tab href="#tab-1">
+                        Glow
+                        <v-icon>phone</v-icon>
+                    </v-tab>
+                    <v-tab>
+                        Radar
+                        <v-icon>favorite</v-icon>
+                    </v-tab>
+                    <v-tab href="#tab-3">
+                        No-Flash
+                        <v-icon>account_box</v-icon>
+                    </v-tab>
                     <v-tab-item value="tab-1">
                         <v-container>
                             <v-switch @change="sendVisualsConfig('glow')" color="primary" v-model="glow" label="Enable/disable glow outline" />
@@ -35,7 +34,6 @@
 export default {
     data () {
         return {
-            valid: null,
             glow: null,
             noFlash: null
         }
