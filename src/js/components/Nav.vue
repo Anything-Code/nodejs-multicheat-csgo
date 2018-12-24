@@ -29,7 +29,7 @@
             </v-list>
         </v-navigation-drawer>
         
-        <v-toolbar fixed app>
+        <v-toolbar dense fixed app>
             <v-toolbar-side-icon @click.stop="drawer = !drawer" />
             <v-toolbar-title>
                 <span class="primary--text">Cheat Menu</span>

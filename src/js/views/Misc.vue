@@ -9,11 +9,11 @@
                     <v-icon>phone</v-icon>
                 </v-tab>
                 <v-tab>
-                    Gay
+                    Playerinfos
                     <v-icon>favorite</v-icon>
                 </v-tab>
                 <v-tab>
-                    Big-Gay
+                    Bunnyhop
                     <v-icon>account_box</v-icon>
                 </v-tab>
                     <v-tab-item value="tab-1">
@@ -42,8 +42,9 @@ export default {
     },
     mounted () {
         this.$socket.emit('config transmitted', true)
-        this.sockets.subscribe('autopistol transmitted', data => {
+        this.sockets.subscribe('config transmitted', data => {
             this.autopistol = data.misc.autopistol
+            console.log(data)
         })
     }
 }

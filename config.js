@@ -1,6 +1,6 @@
 module.exports = {
     visuals: {
-        glow: true,
+        glow: false,
         noFlash: false
     },
     aimbot: new Object,
