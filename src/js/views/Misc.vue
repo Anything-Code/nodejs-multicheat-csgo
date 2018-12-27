@@ -9,7 +9,7 @@
                     <v-icon>phone</v-icon>
                 </v-tab>
                 <v-tab>
-                    Playerinfos
+                    Playerinfo
                     <v-icon>favorite</v-icon>
                 </v-tab>
                 <v-tab>
