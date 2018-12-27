@@ -1,6 +1,9 @@
+const Config = require('./config')
 const Glow = require('./glow')
+const Radar = require('./radar')
 const NoFlash = require('./noFlash')
 const Autopistol = require('./autopistol')
+const Bunnyhop = require('./bunnyhop')
 const Memory = require('memoryjs')
 const Keyboard = require('iohook')
 const Keycode = require('keycode')
@@ -8,7 +11,7 @@ const WebServer = require('./webServer')
 
 module.exports = class Bootstrap {
     constructor () {
-        process.cfg = require('./config')
+        process.cfg = Config
         this.gameIsRunning = false
         this.gameClosedAtStart = true
         this.listenForGameState()
@@ -20,7 +23,7 @@ module.exports = class Bootstrap {
                 if (!this.gameIsRunning) {
                     this.gameIsRunning = true
                     console.log(message)
-                    this.listenForKeyboardInput(this.csProcess)
+                    this.listenForKeyboardInput()
                 }
             }).catch(error => {
                 if (this.gameIsRunning) {
@@ -49,7 +52,9 @@ module.exports = class Bootstrap {
     listenForKeyboardInput () {
         if (process.cfg.visuals.glow) this.toggleCheat('glow')
         if (process.cfg.visuals.noFlash) this.toggleCheat('noFlash')
+        if (process.cfg.visuals.radar) this.toggleCheat('radar')
         if (process.cfg.misc.autopistol) this.toggleCheat('autopistol')
+        if (process.cfg.misc.bunnyhop) this.toggleCheat('bunnyhop')
 
         console.log('Press F12 to toggle anything you have activated on/off')
 
@@ -57,10 +62,11 @@ module.exports = class Bootstrap {
             socket.on('visuals transmitted', visuals => {
                 if (visuals.glow) this.toggleCheat('glow')
                 else if (visuals.noFlash) this.toggleCheat('noFlash')
+                else if (visuals.radar) this.toggleCheat('radar')
             })
             socket.on('misc transmitted', misc => {
-                if (misc.autopistol)
-                    this.toggleCheat('autopistol')
+                if (misc.autopistol) this.toggleCheat('autopistol')
+                else if (misc.bunnyhop) this.toggleCheat('bunnyhop')
             })
             socket.on('route changed', data => {
                 this.ws.socketIo.emit('config transmitted', process.cfg)
@@ -77,6 +83,9 @@ module.exports = class Bootstrap {
                 if (this.autopistol != undefined && this.autopistol.activated) {
                     this.autopistol.disable()
                 } else if (this.autopistol != undefined && !this.autopistol.activated) this.autopistol.enable()
+                if (this.radar != undefined && this.radar.activated) {
+                    this.radar.disable()
+                } else if (this.radar != undefined && !this.radar.activated) this.radar.enable()
                 this.ws.socketIo.emit('config transmitted', process.cfg)
             }
         })
@@ -91,6 +100,16 @@ module.exports = class Bootstrap {
                     this.glow.disable()
                 } else {
                     this.glow.enable()
+                }
+                this.ws.socketIo.emit('config transmitted', process.cfg)
+            break;
+            case 'radar':
+                if (this.radar === undefined) {
+                    this.radar = new Radar(this.processhandle, this.client)
+                } else if (this.radar.activated) {
+                    this.radar.disable()
+                } else {
+                    this.radar.enable()
                 }
                 this.ws.socketIo.emit('config transmitted', process.cfg)
             break;
@@ -111,6 +130,16 @@ module.exports = class Bootstrap {
                     this.autopistol.disable()
                 } else {
                     this.autopistol.enable()
+                }
+                this.ws.socketIo.emit('config transmitted', process.cfg)
+            break;
+            case 'bunnyhop':
+                if (this.bunnyhop === undefined) {
+                    this.bunnyhop = new Bunnyhop(this.processhandle, this.client)
+                } else if (this.bunnyhop.activated) {
+                    this.bunnyhop.disable()
+                } else {
+                    this.bunnyhop.enable()
                 }
                 this.ws.socketIo.emit('config transmitted', process.cfg)
             break;

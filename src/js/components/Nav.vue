@@ -42,7 +42,7 @@
 export default {
     data () {
         return {
-            drawer: null
+            drawer: true
         }
     }
 }
