@@ -17,7 +17,7 @@ module.exports = class Bootstrap {
     this.listenForGameState()
     this.ws = new WebServer
   }
-  listenForGameState() {
+  listenForGameState () {
     this.processStateInterval = setInterval(() => {
       this.processFound('csgo.exe').then(message => {
         if (!this.gameIsRunning) {
@@ -38,7 +38,7 @@ module.exports = class Bootstrap {
       })
     }, 200)
   }
-  processFound(processName) {
+  processFound (processName) {
     return new Promise((resolve, reject) => {
       if (Memory.getProcesses().find(singleProcess => {
           return singleProcess.szExeFile === processName
@@ -51,7 +51,7 @@ module.exports = class Bootstrap {
       } else reject(processName + ' not found, please start ' + processName)
     })
   }
-  listenForKeyboardInput() {
+  listenForKeyboardInput () {
     if (process.cfg.visuals.glow) this.toggleCheat('glow')
     if (process.cfg.visuals.noFlash) this.toggleCheat('noFlash')
     if (process.cfg.visuals.radar) this.toggleCheat('radar')
@@ -61,14 +61,12 @@ module.exports = class Bootstrap {
     console.log('Press F12 to toggle anything you have activated on/off')
 
     this.ws.socketIo.on('connection', socket => {
-      socket.on('visuals transmitted', visuals => {
-        if (visuals.glow) this.toggleCheat('glow')
-        else if (visuals.noFlash) this.toggleCheat('noFlash')
-        else if (visuals.radar) this.toggleCheat('radar')
-      })
-      socket.on('misc transmitted', misc => {
-        if (misc.autopistol) this.toggleCheat('autopistol')
-        else if (misc.bunnyhop) this.toggleCheat('bunnyhop')
+      socket.on('config transmitted', config => {
+        if (config.glow) this.toggleCheat('glow')
+        else if (config.noFlash) this.toggleCheat('noFlash')
+        else if (config.radar) this.toggleCheat('radar')
+        else if (config.autopistol) this.toggleCheat('autopistol')
+        else if (config.bunnyhop) this.toggleCheat('bunnyhop')
       })
       socket.on('route changed', data => {
         this.ws.socketIo.emit('config transmitted', process.cfg)
@@ -76,24 +74,52 @@ module.exports = class Bootstrap {
     })
     Keyboard.on('keydown', key => {
       if (Keycode(key.rawcode) === 'f12' && this.gameIsRunning) {
-        if (this.glow != undefined && this.glow.activated) {
-          this.glow.disable()
-        } else if (this.glow != undefined && !this.glow.activated) this.glow.enable()
-        if (this.noFlash != undefined && this.noFlash.activated) {
-          this.noFlash.disable()
-        } else if (this.noFlash != undefined && !this.noFlash.activated) this.noFlash.enable()
-        if (this.autopistol != undefined && this.autopistol.activated) {
-          this.autopistol.disable()
-        } else if (this.autopistol != undefined && !this.autopistol.activated) this.autopistol.enable()
-        if (this.radar != undefined && this.radar.activated) {
-          this.radar.disable()
-        } else if (this.radar != undefined && !this.radar.activated) this.radar.enable()
+        if (this.panic) {
+          if (this.glow !== undefined && this.cachedCfg.visuals.glow === true) {
+            this.glow.enable()
+          }
+          if (this.noFlash !== undefined && this.cachedCfg.visuals.noFlash === true) {
+            this.noFlash.enable()
+          }
+          if (this.radar !== undefined && this.cachedCfg.visuals.radar === true) {
+            this.radar.enable()
+          }
+          if (this.autopistol !== undefined && this.cachedCfg.misc.autopistol === true) {
+            this.autopistol.enable()
+          }
+          if (this.bunnyhop !== undefined && this.cachedCfg.misc.bunnyhop === true) {
+            this.bunnyhop.enable()
+          }
+
+          this.panic = false
+        } else {
+          this.cachedCfg = JSON.parse(JSON.stringify(process.cfg))
+
+          if (this.glow !== undefined && this.glow.activated) {
+            this.glow.disable()
+          }
+          if (this.noFlash !== undefined && this.noFlash.activated) {
+            this.noFlash.disable()
+          }
+          if (this.radar !== undefined && this.radar.activated) {
+            this.radar.disable()
+          }
+          if (this.autopistol !== undefined && this.autopistol.activated) {
+            this.autopistol.disable()
+          }
+          if (this.bunnyhop !== undefined && this.bunnyhop.activated) {
+            this.bunnyhop.disable()
+          }
+
+          this.panic = true
+        }
+
         this.ws.socketIo.emit('config transmitted', process.cfg)
       }
     })
     Keyboard.start()
   }
-  toggleCheat(type) {
+  toggleCheat (type) {
     switch (type) {
       case 'glow':
         if (this.glow === undefined) {

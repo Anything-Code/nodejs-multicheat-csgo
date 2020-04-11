@@ -76,15 +76,15 @@ export default {
   methods: {
     submitConfig (type) {
       if (type == "glow")
-        this.$socket.emit("visuals transmitted", { glow: true })
+        this.$socket.emit("config transmitted", { glow: true })
       else if (type == "radar")
-        this.$socket.emit("visuals transmitted", { radar: true })
+        this.$socket.emit("config transmitted", { radar: true })
       else if (type == "noFlash")
-        this.$socket.emit("visuals transmitted", { noFlash: true })
+        this.$socket.emit("config transmitted", { noFlash: true })
       else if (type == "autopistol")
-        this.$socket.emit("misc transmitted", { autopistol: true })
+        this.$socket.emit("config transmitted", { autopistol: true })
       else if (type == "bunnyhop")
-        this.$socket.emit("misc transmitted", { bunnyhop: true })
+        this.$socket.emit("config transmitted", { bunnyhop: true })
     }
   },
   mounted () {
