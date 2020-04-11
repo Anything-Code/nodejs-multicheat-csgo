@@ -21,15 +21,15 @@ Vue.use(new VueSocketIO({
   connection: 'http://localhost'
 }))
 
-router.beforeEach(
-  (to, from, next) => {
-    if (to.path == '/') {
-      next({
-        path: '/visuals'
-      });
-    } else next()
-  }
-)
+// router.beforeEach(
+//   (to, from, next) => {
+//     if (to.path == '/') {
+//       next({
+//         path: '/visuals'
+//       });
+//     } else next()
+//   }
+// )
 
 new Vue({
   el: '#app',

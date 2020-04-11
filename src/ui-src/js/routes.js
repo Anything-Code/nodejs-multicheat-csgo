@@ -3,20 +3,20 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-import Visuals from './views/Visuals'
-import Misc from './views/Misc'
+import Features from './views/Features'
+import Config from './views/Config'
 
 const router = new VueRouter({
   mode: 'history',
   routes: [{
-      path: '/visuals',
-      name: 'visuals',
-      component: Visuals
+      path: '/',
+      name: 'features',
+      component: Features
     },
     {
-      path: '/misc',
-      name: 'misc',
-      component: Misc
+      path: '/config',
+      name: 'config',
+      component: Config
     },
   ],
 })
