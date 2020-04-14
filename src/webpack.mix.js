@@ -11,8 +11,8 @@ let mix = require('laravel-mix');
  |
  */
 
-mix.setPublicPath('public')
+mix.setPublicPath('static')
 
 mix
-  .js('ui-src/js/app.js', 'public/')
-  .sass('ui-src/sass/app.scss', 'public/')
+  .js('ui/js/app.js', 'public/')
+  .sass('ui/sass/app.scss', 'public/')
