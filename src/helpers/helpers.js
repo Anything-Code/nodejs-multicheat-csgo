@@ -1,6 +1,5 @@
-module.exports = class Helpers
-{
-  static hexToRgb (h)
+module.exports = {
+  hexToRgb (h)
   {
     let color = this.cutHex(h),
         r = parseInt(color.substring(0, 2), 16),
@@ -13,14 +12,14 @@ module.exports = class Helpers
       b: this.roundDown(b / 255, 3),
       a: 1
     }
-  }
+  },
 
-  static cutHex (h)
+  cutHex (h)
   {
     return h.charAt(0) === '#' ? h.substring(1, 7) : h
-  }
+  },
 
-  static roundDown (number, decimals)
+  roundDown (number, decimals)
   {
     decimals = decimals || 0
     return Math.floor(number * Math.pow(10, decimals)) / Math.pow(10, decimals)

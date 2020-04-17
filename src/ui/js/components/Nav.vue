@@ -24,7 +24,7 @@
     <v-toolbar dense fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>
-        <span class="primary--text">Cheat Menu</span>
+        <span class="primary--text">Csgo Cheat Menu</span>
       </v-toolbar-title>
     </v-toolbar>
   </div>

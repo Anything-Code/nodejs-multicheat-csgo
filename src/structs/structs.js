@@ -41,17 +41,17 @@ module.exports = {
 
                           .result(),
 
-  clrRenderTeam: Concentrate()
-                              .uint8(0)   // r
-                              .uint8(0)   // g
-                              .uint8(255) // b
+  clrRenderTeam: rgba => Concentrate()
+                              .uint8(rgba.r)   // r
+                              .uint8(rgba.g)   // g
+                              .uint8(rgba.b)   // b
 
                               .result(),
 
-  clrRenderEnemy: Concentrate()
-                              .uint8(255) // r
-                              .uint8(0)   // g
-                              .uint8(0)   // b
+  clrRenderEnemy: rgba => Concentrate()
+                              .uint8(rgba.r)   // r
+                              .uint8(rgba.g)   // g
+                              .uint8(rgba.b)   // b
 
                               .result(),
 }
