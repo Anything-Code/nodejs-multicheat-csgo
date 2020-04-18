@@ -9,8 +9,10 @@ App.use(express.static(__dirname + '/../static'))
 App.use(history())
 App.use(express.static(__dirname + '/../static'))
 
-module.exports = class WebServer {
-  constructor () {
+module.exports = class WebServer
+{
+  constructor ()
+  {
     this.socketIo = SocketIo
     Http.listen(Port, () => {
       console.log('type "localhost" in your steam-overlay-browser to open the menu')
