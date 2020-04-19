@@ -1,19 +1,24 @@
-const path = require('path')
-const fs = require('fs')
+// const path = require('path')
+// const fs = require('fs')
 
-const featuresPath = '../features/'
-const directoryPath = path.join(__dirname, featuresPath)
+// const featuresPath = '../features/'
+// const directoryPath = path.join(__dirname, featuresPath)
 
-let features = new Object,
-    files = fs.readdirSync(directoryPath)
+// let features = new Object,
+//     files = fs.readdirSync(directoryPath)
 
-files.forEach(file => {
-  features[capitalizeFirstLetter(file.split('.').shift())] = require(featuresPath + file)
-})
+// files.forEach(file => {
+//   features[capitalizeFirstLetter(file.split('.').shift())] = require(featuresPath + file)
+// })
 
-function capitalizeFirstLetter (string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+// function capitalizeFirstLetter (string) {
+//   return string.charAt(0).toUpperCase() + string.slice(1);
+// }
+
+module.exports = {
+  Autopistol: require('../features/autopistol'),
+  Bunnyhop: require('../features/bunnyhop'),
+  Glow: require('../features/glow'),
+  NoFlash: require('../features/noFlash'),
+  Radar: require('../features/radar'),
 }
-
-
-module.exports = features
