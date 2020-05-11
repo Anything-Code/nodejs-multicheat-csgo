@@ -8,6 +8,7 @@
   "scripts": {
     "dist": "npm run distribute",
     "distribute": "cross-env rm -rf dist/nodejs-multicheat-csgo/build && cp -r build dist/nodejs-multicheat-csgo",
+    "bootstrap": "cp -r node_modules dist/nodejs-multicheat-csgo && cp -r node-v11.15.0-win-x86 dist/nodejs-multicheat-csgo && cp start.bat dist/nodejs-multicheat-csgo",
     "build": "cross-env webpack --progress --config=webpack.conf.js && rm -rf build/static && cp -r src/static build",
     "start": "cross-env node-v11.15.0-win-x86/node src/main",
     "dev": "cross-env NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
