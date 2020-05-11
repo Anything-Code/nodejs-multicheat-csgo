@@ -6,13 +6,15 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "build": "cross-env webpack --progress --config=webpack.conf.js",
+    "dist": "npm run distribute",
+    "distribute": "cross-env rm -rf dist/nodejs-multicheat-csgo/build && cp -r build dist/nodejs-multicheat-csgo",
+    "build": "cross-env webpack --progress --config=webpack.conf.js && rm -rf build/static && cp -r src/static build",
     "start": "cross-env node-v11.15.0-win-x86/node src/main",
     "dev": "cross-env NODE_ENV=development webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "hot": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js && rm mix-manifest.json"
+    "production": "cross-env NODE_ENV=production webpack --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js && rm mix-manifest.json",
+    "prod": "npm run production"
   },
   "author": "Niklas Lübcke",
   "license": "ISC",
