@@ -1,7 +1,7 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
 
-module.exports = {
+const server = {
   mode: 'production',
   target: 'node',
   externals: [nodeExternals()],
@@ -10,6 +10,8 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist/nodejs-multicheat-csgo/build')
+    path: path.resolve(__dirname, 'build')
   }
 }
+
+module.exports = [server]
